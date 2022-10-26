@@ -1,9 +1,10 @@
-import { View, Text, Button, Platform, TextInput, Link } from 'react-native';
+import { View, Text, Button, Platform, TextInput } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState, useEffect } from 'react'
 import { WebView } from 'react-native-webview';
 import { StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
+import * as WebBrowser from 'expo-web-browser';
 
 
 function Search() {
@@ -22,6 +23,13 @@ function Search() {
 
     // const  pour avoir le bon format timestamp spécifique pour l'api
     const dateTimeStamp = date.toLocaleDateString('en-GB').split('/').reverse().join('');
+
+    
+    // const webBrowser
+    const _handlePressButtonAsync = async () => {
+      let result = await WebBrowser.openBrowserAsync(dataUrl);
+      console.log("Oki Doki", result);
+    };
 
 
     // Fetch Get Api 
@@ -56,8 +64,8 @@ function Search() {
           }
         );
     };
-    
-    
+
+
 
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
@@ -97,29 +105,32 @@ function Search() {
           {/* <Button onPress={showTimepicker} title="Show time picker!" /> */}
           {show && (
             <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            onChange={onChange}
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              onChange={onChange}
             />
-            )}
+          )}
         </View>
 
+
+
+        <Button title="Open WebBrowser" onPress={_handlePressButtonAsync} />
         <Text>{dataUrl}</Text>
         <TextInput placeholder="Renseignez un site internet. 'Exemple : www.facebook.com'" placeholderTextColor="#FFF" onChangeText={(paramsEvent) => setTextRecherche(paramsEvent)}
-          style={{ backgroundColor:"#2ecc71",borderStyle: "solid", borderColor: "black", borderWidth: "2em", borderRadius:"20px", width:"100%"}}>
+          style={{ backgroundColor: "#2ecc71", borderStyle: "solid", borderColor: "black", borderWidth: "2em", borderRadius: "20px", width: "100%" }}>
 
         </TextInput>
         <Button title='Rechercher' onPress={() => {
           console.log(textRecherche);
           getApi(textRecherche, dateTimeStamp)
         }}></Button>
-    <WebView
-      style={styles.container}
-      
-      source={{ uri: `${dataUrl}` }}
-    />
+        <WebView
+          style={styles.container}
+
+          source={{ uri: `${dataUrl}` }}
+        />
       </View>
     );
   };
